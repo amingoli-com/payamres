@@ -1,34 +1,25 @@
 package com.ermile.payamres;
 
 
-import android.app.Notification;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.IBinder;
-import android.provider.Settings;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.telephony.SmsManager;
 import android.util.Log;
-
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.ermile.payamres.network.AppContoroler;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -53,7 +44,7 @@ public class service extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.e(TAG, "onStartCommand");
+        Log.i(TAG, "onStartCommand");
         super.onStartCommand(intent, flags, startId);
 
         startTimer();
@@ -64,7 +55,7 @@ public class service extends Service {
 
     @Override
     public void onCreate() {
-        Log.e(TAG, "onCreate");
+        Log.i(TAG, "onCreate");
 
 
     }
@@ -72,10 +63,16 @@ public class service extends Service {
     @Override
     public void onDestroy() {
         Log.e(TAG, "onDestroy");
-        stoptimertask();
         super.onDestroy();
 
+        /*Shared Preferences for info user*/
+        final SharedPreferences save_user = getApplicationContext().getSharedPreferences("save_user", MODE_PRIVATE);
+        SharedPreferences.Editor SaveUser_editor = save_user.edit();
+        final Boolean getSMS_servic = save_user.getBoolean("getSMS_servic", false);
+        SaveUser_editor.putBoolean("getSMS_servic",false);
+        SaveUser_editor.apply();
 
+        stoptimertask();
     }
 
     //we are going to use a handler to be able to run in our TimerTask
@@ -89,8 +86,9 @@ public class service extends Service {
         //initialize the TimerTask's job
         initializeTimerTask();
 
+        Log.i(TAG,"startTimer 1");
         //schedule the timer, after the first 5000ms the TimerTask will run every 10000ms
-        timer.schedule(timerTask, 6000, Your_X_SECS * 1000); //
+        timer.schedule(timerTask, 5000, Your_X_SECS * 1000); //
         //timer.schedule(timerTask, 5000,1000); //
     }
 
@@ -105,20 +103,29 @@ public class service extends Service {
     public void initializeTimerTask() {
         /*Shared Preferences for info user*/
         final SharedPreferences save_user = getApplicationContext().getSharedPreferences("save_user", MODE_PRIVATE);
+        final SharedPreferences.Editor SaveUser_editor = save_user.edit();
+        final Boolean getSMS_servic = save_user.getBoolean("getSMS_servic", false);
         final Boolean has_number = save_user.getBoolean("has_number", false);
         final String number_phone = save_user.getString("number_phone", null);
 
         timerTask = new TimerTask() {
             public void run() {
-                //use a handler to run a toast that shows the current timestamp
-                handler.post(new Runnable() {
-                    public void run() {
-                        //TODO CALL NOTIFICATION FUNC
-                        if (has_number && number_phone != null) {
-                            LastSMSSending(getBaseContext());
+                Log.i(TAG,"timerTask");
+                SaveUser_editor.putBoolean("getSMS_servic",true);
+                SaveUser_editor.apply();
+                if(getSMS_servic)
+                {
+                    //use a handler to run a toast that shows the current timestamp
+                    handler.post(new Runnable() {
+                        public void run() {
+                            //TODO CALL NOTIFICATION FUNC
+                            if (has_number && number_phone != null) {
+                                LastSMSSending(getBaseContext());
+                                Log.i(TAG,"NEW");
+                            }
                         }
-                    }
-                });
+                    });
+                }
             }
         };
     }
@@ -143,18 +150,27 @@ public class service extends Service {
                                         JSONArray result = mainObject.getJSONArray("result");
                                         for (int newM = 0; newM <= result.length(); newM++) {
                                             JSONObject getsms_Forsend = result.getJSONObject(newM);
-                                            id_smsForSend = getsms_Forsend.getString("id");
-                                            String smsto = getsms_Forsend.getString("fromnumber");
-                                            String sms_text = getsms_Forsend.getString("answertext");
+                                            id_smsForSend = null;
+                                            if(!getsms_Forsend.isNull("id")){
+                                                id_smsForSend = getsms_Forsend.getString("id");
+                                                String smsto = getsms_Forsend.getString("fromnumber");
+                                                String sms_text = getsms_Forsend.getString("answertext");
 
-                                            try {
-                                                SmsManager smsManager = SmsManager.getDefault();
-                                                smsManager.sendTextMessage(smsto, null, sms_text, null, null);
-                                                Log.i("LastSMSSending", "last sms > ok true > send sms");
-                                                SMS_Sent(context_LastSMSSending);
-                                            } catch (Exception e) {
-                                                Log.i("LastSMSSending_error","No Send last sms"+"\n"+smsto+"\n"+sms_text);
+                                                try {
+                                                    SmsManager smsManager = SmsManager.getDefault();
+                                                    smsManager.sendTextMessage(smsto, null, sms_text, null, null);
+                                                    Log.i("LastSMSSending", "last sms > ok true > send sms");
+                                                    SMS_Sent(id_smsForSend);
+                                                    Log.i("LastSMSSending","id is "+id_smsForSend);
+
+                                                } catch (Exception e) {
+                                                    Log.i("LastSMSSending_error","No Send last sms"+"\n"+smsto+"\n"+sms_text);
+                                                }
+                                            }else {
+                                                id_smsForSend = null;
                                             }
+
+
 
                                         }
                                     }else {
@@ -208,17 +224,24 @@ public class service extends Service {
                                         JSONArray result = mainObject.getJSONArray("result");
                                         for (int newM = 0; newM <= result.length(); newM++) {
                                             JSONObject getsms_Forsend = result.getJSONObject(newM);
-                                            id_smsForSend = getsms_Forsend.getString("id");
-                                            String smsto = getsms_Forsend.getString("fromnumber");
-                                            String sms_text = getsms_Forsend.getString("answertext");
+                                            id_smsForSend = null;
+                                            if(!getsms_Forsend.isNull("id")){
+                                                id_smsForSend = getsms_Forsend.getString("id");
+                                                String smsto = getsms_Forsend.getString("fromnumber");
+                                                String sms_text = getsms_Forsend.getString("answertext");
 
-                                            try {
-                                                SmsManager smsManager = SmsManager.getDefault();
-                                                smsManager.sendTextMessage(smsto, null, sms_text, null, null);
-                                                Log.i("NewSMSSending", "last sms > ok true > send sms");
-                                                SMS_Sent(context_NewSMSSending);
-                                            } catch (Exception e) {
-                                                Log.i("NewSMSSending","No Send");
+
+
+                                                try {
+                                                    SmsManager smsManager = SmsManager.getDefault();
+                                                    smsManager.sendTextMessage(smsto, null, sms_text, null, null);
+                                                    Log.i("NewSMSSending", "last sms > ok true > send sms");
+                                                    SMS_Sent(id_smsForSend);
+                                                    Log.i("NewSMSSending","id is "+id_smsForSend);
+
+                                                } catch (Exception e) {
+                                                    Log.i("NewSMSSending","No Send");
+                                                }
                                             }
                                         }
                                     }else {
@@ -251,9 +274,9 @@ public class service extends Service {
     }
 
     /*SMS Sent*/
-    public void SMS_Sent(Context context_SMS_Sent){
+    public void SMS_Sent(final String id_smsForSend){
         /*Get Number Phone */
-        final SharedPreferences save_user = context_SMS_Sent.getApplicationContext().getSharedPreferences("save_user", MODE_PRIVATE);
+        final SharedPreferences save_user = getApplicationContext().getSharedPreferences("save_user", MODE_PRIVATE);
         final Boolean has_number = save_user.getBoolean("has_number", false);
         final String number_phone = save_user.getString("number_phone", null);
         if (has_number && number_phone != null){

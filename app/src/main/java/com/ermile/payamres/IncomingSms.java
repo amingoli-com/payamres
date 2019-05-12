@@ -43,6 +43,7 @@ public class IncomingSms extends BroadcastReceiver {
     String link_SendToServer = "https://khadije.com/fa/api/v6/smsapp/new";
 
 
+
     public static final String SMS_BUNDLE = "pdus";
     int db = 1;
     int db_puter = 1;
@@ -50,7 +51,6 @@ public class IncomingSms extends BroadcastReceiver {
 
 
     public void onReceive(final Context context, Intent intent) {
-        Log.i("SSSPPP","Starting");
 
         /*Get Serial Number of SimCart*/
         TelephonyManager telemamanger = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
@@ -66,8 +66,16 @@ public class IncomingSms extends BroadcastReceiver {
 
         /*Shared Preferences for info user*/
         final SharedPreferences save_user = context.getSharedPreferences("save_user", MODE_PRIVATE);
+        SharedPreferences.Editor SaveUser_editor = save_user.edit();
+        final Boolean getSMS_servic = save_user.getBoolean("getSMS_servic", false);
         final Boolean has_number = save_user.getBoolean("has_number", false);
         final String number_phone = save_user.getString("number_phone", null);
+        if (!getSMS_servic){
+            context.startService(new Intent(context, service.class));
+            SaveUser_editor.putBoolean("getSMS_servic",true);
+            SaveUser_editor.apply();
+            Log.i("Timers", "IncomingSms : " + getSMS_servic);
+        }
 
         /** Receive SMS */
         if (intentExtras != null) {

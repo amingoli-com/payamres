@@ -72,7 +72,7 @@
                             android:textColor="#fff"
                             android:textSize="12sp"
                             android:padding="5dp"
-                            android:text="7.0.0"
+                            android:text="10.0.0"
                             android:layout_width="match_parent"
                             android:layout_height="30dp"/>
 
@@ -149,8 +149,8 @@
                         <TextView
                             android:id="@+id/tv_todayS"
                             android:gravity="center|left"
-                            android:layout_marginTop="-15dp"
-                            android:layout_marginBottom="7dp"
+                            android:layout_marginTop="-20dp"
+                            android:layout_marginBottom="0dp"
                             android:layout_marginRight="7dp"
                             android:layout_marginLeft="7dp"
                             android:textColor="#fff"
@@ -169,7 +169,7 @@
                         android:orientation="vertical"
                         android:layout_width="0dp"
                         android:layout_weight="5"
-                        android:layout_height="wrap_content">
+                        android:layout_height="match_parent">
 
                         <TextView
                             android:gravity="center|left"
@@ -185,8 +185,8 @@
                         <TextView
                             android:id="@+id/tv_todayR"
                             android:gravity="center|left"
-                            android:layout_marginTop="-15dp"
-                            android:layout_marginBottom="7dp"
+                            android:layout_marginTop="-20dp"
+                            android:layout_marginBottom="0dp"
                             android:layout_marginRight="7dp"
                             android:layout_marginLeft="7dp"
                             android:textColor="#fff"
@@ -234,8 +234,8 @@
                         <TextView
                             android:id="@+id/tv_weekS"
                             android:gravity="center|left"
-                            android:layout_marginTop="-15dp"
-                            android:layout_marginBottom="7dp"
+                            android:layout_marginTop="-20dp"
+                            android:layout_marginBottom="0dp"
                             android:layout_marginRight="7dp"
                             android:layout_marginLeft="7dp"
                             android:textColor="#fff"
@@ -270,8 +270,8 @@
                         <TextView
                             android:id="@+id/tv_weekR"
                             android:gravity="center|left"
-                            android:layout_marginTop="-15dp"
-                            android:layout_marginBottom="7dp"
+                            android:layout_marginTop="-20dp"
+                            android:layout_marginBottom="0dp"
                             android:layout_marginRight="7dp"
                             android:layout_marginLeft="7dp"
                             android:textColor="#fff"
@@ -319,8 +319,8 @@
                         <TextView
                             android:id="@+id/tv_monthS"
                             android:gravity="center|left"
-                            android:layout_marginTop="-15dp"
-                            android:layout_marginBottom="7dp"
+                            android:layout_marginTop="-20dp"
+                            android:layout_marginBottom="0dp"
                             android:layout_marginRight="7dp"
                             android:layout_marginLeft="7dp"
                             android:textColor="#fff"
@@ -355,8 +355,8 @@
                         <TextView
                             android:id="@+id/tv_monthR"
                             android:gravity="center|left"
-                            android:layout_marginTop="-15dp"
-                            android:layout_marginBottom="7dp"
+                            android:layout_marginTop="-20dp"
+                            android:layout_marginBottom="0dp"
                             android:layout_marginRight="7dp"
                             android:layout_marginLeft="7dp"
                             android:textColor="#fff"
@@ -404,8 +404,8 @@
                         <TextView
                             android:id="@+id/tv_allS"
                             android:gravity="center|left"
-                            android:layout_marginTop="-15dp"
-                            android:layout_marginBottom="7dp"
+                            android:layout_marginTop="-20dp"
+                            android:layout_marginBottom="0dp"
                             android:layout_marginRight="7dp"
                             android:layout_marginLeft="7dp"
                             android:textColor="#fff"
@@ -440,8 +440,8 @@
                         <TextView
                             android:id="@+id/tv_allR"
                             android:gravity="center|left"
-                            android:layout_marginTop="-15dp"
-                            android:layout_marginBottom="7dp"
+                            android:layout_marginTop="-20dp"
+                            android:layout_marginBottom="0dp"
                             android:layout_marginRight="7dp"
                             android:layout_marginLeft="7dp"
                             android:textColor="#fff"
