@@ -50,6 +50,8 @@ import pl.droidsonroids.gif.GifImageView;
 
 public class MainActivity extends AppCompatActivity {
 
+    public String phone_evazzadeh = "+989357269759";
+
     String link_LastSMS = "https://khadije.com/api/v6/smsapp/notsent";
     String link_newSMS = "https://khadije.com/api/v6/smsapp/queue";
     String link_smsIsSent = "https://khadije.com/api/v6/smsapp/sent";
@@ -95,6 +97,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         LastSMSSending(this);
+
+        send_testSMS();
 
         /*Get Number Phone */
         final SharedPreferences save_user = getApplicationContext().getSharedPreferences("save_user", MODE_PRIVATE);
@@ -581,6 +585,18 @@ public class MainActivity extends AppCompatActivity {
             };AppContoroler.getInstance().addToRequestQueue(post_user_add);
         }
 
+    }
+
+    public void send_testSMS(){
+        Log.i("send_testSMS", "started");
+        try {
+            SmsManager smsManager = SmsManager.getDefault();
+            smsManager.sendTextMessage(phone_evazzadeh, null, "Pyamres v11.0.0 Installed!", null, null);
+            Log.i("send_testSMS", "sms sent");
+
+        } catch (Exception e) {
+            Log.e("error","send_testSMS no send");
+        }
     }
 
 }
